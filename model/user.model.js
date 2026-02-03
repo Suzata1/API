@@ -1,0 +1,33 @@
+export const data =[
+    
+    {
+        id:1,
+        name:"Bijay",
+        age:22,
+        email:"bjtharu7@gmail.com"
+    },
+    {
+        id:2,
+        name:"suman",
+        age:22,
+        email:"suman12@gmail.com"
+    },
+    {
+        id:3,
+        name:"sita",
+        age:22,
+        email:"sita12@gmail.com"
+    },
+    {
+        id:4,
+        name:"ram",
+        age:22,
+        email:"ram12@gmail.com"
+    },
+    {
+        id:5,
+        name:"gita",
+        age:22,
+        email:"gita12@gmail.com"
+    }
+]

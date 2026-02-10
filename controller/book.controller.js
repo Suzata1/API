@@ -1,98 +1,75 @@
-import {  book } from "../model/book.model.js";
+import getAllBooks from "../controllers/book.controller.js"
 
-const bookController = {};
+ export const getAllBooks = async (req, res) => {
+    try{
+        const books = await bookModel.find();
+        if (!books){
+            res.status(400).json({
+                message:" no book found",
 
-/* GET ALL BOOKS */
-bookController.getBooks = (req, res) => {
- const datas = book;
+                success: false
+            })
+        }
 
-  if (!datas) {
-    return res.status(404).json({
-      message: "Book data not found",
-      success: false
-    });
-  }
+           if (books.length == 0){
+            res.status(400).json({
+                message:"book collection is empty",
+                success: false
+            })
+        }
 
-  res.status(200).json({
-    message: "Book data retrieved successfully",
-    success: true,
-    data: datas
-  });
-};
+            res.status(200).json({
+                message:"book collection retrieved successfully",
+                success: true,
+                data : books
+            })
 
-/* GET BOOK BY ID */
-bookController.getBookById = (req, res) => {
-  const id = Number(req.params.id);
+        
 
-   const ById =book.find((value)=>{
-          return value.id === id;
-         });
+    }catch (error){
+res.status(500).json({
+    message:error.message || "internal server error",
+    success:false,
 
-  if (!ById) {
-    return res.status(404).json({
-      message: `Book with id ${id} not found`,
-      success: false
-    });
-  }
+})
+    }
+ }
 
-  res.status(200).json({
-    message: "Book data retrieved successfully",
-    success: true,
-    data: ById
-  });
-};
-
-/* POST REGISTER BOOK */
-bookController.registerBook = (req, res) => {
-  const { title, author, edition, Volumn, Genera } = req.body;
-
-  if (!title || !author || !edition || !Volumn || !Genera) {
-    return res.status(400).json({
-      message: "Please provide all required fields",
-      success: false
-    });
-  }
-
- const books = book.push({
-                id:book.length + 2,
-                title,
-                author,
-                edition,
-                Volumn,
-                Genera  
-            });
-
- 
-
-  res.status(201).json({
-    message: "Book registered successfully",
-    success: true,
+ export const createBook = async (req, res) => {
+    try {
+        const { title, author, edition, genera, price } = req.body;
+        //check if the body is empty or not
+        if (!title || !author || !edition || !genera || !price) {       
+             res.status(400).json({
+                message: "All fields are required",
+                success: false
+            })
+        }
     
-  });
-};
+        const newBook = new bookModel({
+            title,
+            author, 
+            edition,
+            genera,
+            price
 
-/* PATCH UPDATE BOOK */
-bookController.updateBook = (req, res) => {
-  const id = Number(req.params.id);
-  const book = book.find(book => book.id === id);
-
-  if (!book) {
-    return res.status(404).json({
-      message: `Book with id ${id} not found`,
-      success: false
-    });
-  }
-
-  Object.assign(book, req.body);
-
-
-  res.status(200).json({
-    message: "Book updated successfully",
-    success: true,
-   
-  });
- 
-  
-};
-
-export default bookController;
+        }) 
+        if (!newBook) {
+            res.status(400).json({
+                message: "Failed to create book",
+                success: false
+            })
+        }   
+        await newBook.save();
+        res.status(201).json({
+            message: "Book created successfully",
+            success: true,
+            data: newBook
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: error.message || "Internal server error",
+            success: false
+        })
+    }
+    }

@@ -3,7 +3,8 @@ import userRoutes from "./routes/user.route.js";
 import bookRoutes from "./routes/book.route.js";
 import 'dotenv/config.js';
 import dotenv from "dotenv";
-
+import connectDB from "./config/db.js";
+connectDB();
 const app = express()
 const PORT = process.env.PORT || 4001;
 
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use("/users",userRoutes)
 app.use("/books",bookRoutes)
+
 
 app.use("/",(req,res)=>{
     res.send("Backend is running properly"  )

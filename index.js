@@ -15,7 +15,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use("/users",userRoutes)
-app.use("/books",bookRoutes)
+ app.use("/books",bookRoutes)
 
 
 app.use("/",(req,res)=>{

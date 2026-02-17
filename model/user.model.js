@@ -1,33 +1,34 @@
-export const data =[
-    
-    {
-        id:1,
-        name:"Bijay",
-        age:22,
-        email:"bjtharu7@gmail.com"
+import mongoose from "mongoose";
+
+const userSchema = new mongoose.Schema({
+    username: {
+       type: String,
+       required: true,
+       unique: true
     },
-    {
-        id:2,
-        name:"suman",
-        age:22,
-        email:"suman12@gmail.com"
+    email: {
+         
+        type: String,
+        required: true,
+        unique:true
     },
-    {
-        id:3,
-        name:"sita",
-        age:22,
-        email:"sita12@gmail.com"
+    password: {
+        type: String,
+        required: true,
+        minLength: 6,
     },
-    {
-        id:4,
-        name:"ram",
-        age:22,
-        email:"ram12@gmail.com"
+    role: {
+        type: String,
+        enum: ["admin","user","guest"],
+        default:"user"
     },
-    {
-        id:5,
-        name:"gita",
-        age:22,
-        email:"gita12@gmail.com"
+    gender: {
+        type: String,
+        enum: ["male", "female", "other"],
+        required: true
     }
-]
+},{
+    timestamps: true
+})
+const User = mongoose.model("User", userSchema);
+export default User;

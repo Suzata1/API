@@ -1,6 +1,6 @@
  import jwt from 'jsonwebtoken';
 import userModel from '../model/user.model.js';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
  export const login = async (req, res) => {
@@ -20,9 +20,10 @@ import nodemailer from 'nodemailer';
                 message: " user with this email does not exits ",
                 success: false,
             });
-        console.log 
-    //  const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!password == user.password) 
+        
+          const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordValid) {
                 res.status(400).json({
                 message: "Invalid password",
                 success: false,
@@ -46,7 +47,7 @@ import nodemailer from 'nodemailer';
             token: token
         })
     
-
+}
         
     }catch (error) {
         res.status(500).json({
@@ -54,7 +55,7 @@ import nodemailer from 'nodemailer';
             success: false,
         })
     }   
-}
+ }
 export const forgetPassword = async (req, res) => {
     try{
         const { email } = req.body;
@@ -82,7 +83,6 @@ export const forgetPassword = async (req, res) => {
 
             exitUser.otp = otpVal;
             exitUser.otpExpiries = otpExpiries;
-            exitUser.otpExpiries = expiries;
             exitUser.otpVerified = false;
 
             await exitUser.save();
@@ -113,7 +113,8 @@ export const forgetPassword = async (req, res) => {
     // }
     })
 
-    }catch (error) {
+    }
+    catch (error) {
         res.status(500).json({
             message: error.message || "internal server error",
             success: false,
@@ -131,7 +132,9 @@ export  const verifyOtp = async (req, res) => {
                 success: false,
             });
         }
-        if(user.otp !== otp ) {
+        console.log("User.otp", otp);
+        console.log("User OTP", user.otp);
+        if(user.otp.trim() !== otp ) {
             res.status(400).json({
                 message: "Invalid OTP",
                 success: false,
@@ -143,7 +146,13 @@ export  const verifyOtp = async (req, res) => {
             success: false,
         });
        }
-       
+       user.otpVerified = true;
+         await user.save();
+         res.status(200).json({
+            message: "OTP verified successfully",
+            success: true,
+        })
+
                     
 
     }catch (error) {
@@ -152,5 +161,49 @@ export  const verifyOtp = async (req, res) => {
             success: false,
         })  
 
+    }
+}
+//rest password and matching new password and confirm password and otp verification
+export const resetPassword = async (req, res) => {
+    try{
+        const { email, newPassword, confirmPassword } = req.body;
+        const user = await userModel.findOne({ email });
+        if (!user) {
+            res.status(404).json({
+                message: "User with this email does not exist",
+                success: false,
+            });
+        }
+        //logic 
+        if (newPassword !== confirmPassword) {
+            res.status(400).json({
+                message: "New password and confirm password do not match",
+                success: false,
+            });
+        }
+        if (!user.otpVerified) {
+            res.status(400).json({
+                message: "OTP is  not verified",
+                success: false,
+            });
+        }
+       const salt = await bcrypt.genSalt(10);
+       const hashPassword = await bcrypt.hash(newPassword, salt);
+         
+        user.password = hashPassword;
+        user.otp = null;
+        user.otpExpiries = null;
+        user.otpVerified = false;
+        await user.save();
+        res.status(200).json({
+            message: "Password reset successfully",
+            success: true,
+        })
+
+    }catch (error) {
+        res.status(500).json({
+            message: error.message || "internal server error",  
+            success: false,
+        })
     }
 }

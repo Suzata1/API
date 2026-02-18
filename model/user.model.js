@@ -26,8 +26,20 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["male", "female", "other"],
         required: true
+    }, 
+    otp:{
+        type: String,
+    },
+    otpExpiries:{
+        type: Date,
+    },
+    otpVerified:{
+        type: Boolean,
+        default: false,
     }
-},{
+    
+},
+{
     timestamps: true
 })
 const User = mongoose.model("User", userSchema);

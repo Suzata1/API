@@ -77,6 +77,16 @@ export const forgetPassword = async (req, res) => {
                 return otpVal;
             };
             const otpVal = otp();
+
+            const otpExpiries = new Date(Date.now() + 10 * 60 * 1000);
+
+            exitUser.otp = otpVal;
+            exitUser.otpExpiries = otpExpiries;
+            exitUser.otpExpiries = expiries;
+            exitUser.otpVerified = false;
+
+            await exitUser.save();
+
           const transporter = nodemailer.createTransport({
  
   service: 'gmail',
@@ -114,29 +124,26 @@ export const forgetPassword = async (req, res) => {
 export  const verifyOtp = async (req, res) => {
     try{
         const { email, otp } = req.body;
-        if (!email || !otp) {
+        const user =await userModel.findOne({ email });
+        if (!user) {
             res.status(400).json({
-                message: "Email and OTP are required",
+                message: "User with this email does not exist",
                 success: false,
             });
         }
-            const exitUser = await userModel.findOne({ email });    
-            if (!exitUser) {
-                res.status(400).json({
-                    message: "User with this email does not exist",
-                    success: false,
-                });
-            }
-                if (otp !== exitUser.otp) {
-                    res.status(400).json({
-                        message: "Invalid OTP",
-                        success: false,
-                    });
-                }       
-                res.status(200).json({
-                    message: "OTP verified successfully",
-                    success: true,
-                })
+        if(user.otp !== otp ) {
+            res.status(400).json({
+                message: "Invalid OTP",
+                success: false,
+            });
+        }
+       if (user.otpExpiries <  Date.now()) {
+        res.status(400).json({
+            message: "OTP has expired",
+            success: false,
+        });
+       }
+       
                     
 
     }catch (error) {

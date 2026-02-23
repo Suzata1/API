@@ -4,6 +4,7 @@ import bookRoutes from "./routes/book.route.js";
 import 'dotenv/config.js';
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import documentRoutes from "./routes/document.route.js";
 connectDB();
 const app = express()
 const PORT = process.env.PORT || 4001;
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use("/users",userRoutes)
  app.use("/books",bookRoutes)
+app.use("/documents", documentRoutes);
 
 
 app.use("/",(req,res)=>{

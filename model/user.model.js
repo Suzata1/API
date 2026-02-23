@@ -27,6 +27,9 @@ const userSchema = new mongoose.Schema({
         enum: ["male", "female", "other"],
         required: true
     }, 
+    profilePicture: {
+        type: Object,
+    },
     otp:{
         type: String,
     },

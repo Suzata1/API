@@ -7,8 +7,9 @@ const userController = {}
 userController.registerUser = async (req, res) => {
     try {
         const { username, email, password, role, gender } = req.body;
+        const profilePic = req.file;
         //validation
-        if (!username || !email || !password || ! gender) {
+        if (!username || !email || !password || ! gender ||!role || ! profilePic) {
             return res.status(400).json({
                 message: "user cannot be empty",
                 success: false,
@@ -38,8 +39,10 @@ userController.registerUser = async (req, res) => {
         email,
         password: hashPassword,
         role,
-        gender
+        gender,
+        profilePicture: profilePic,
     })
+    console.log(newUser)
     
         await newUser.save();
         //response

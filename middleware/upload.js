@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     },
 });
 
-const files = ["image/jpeg", "image/png", "image/gif"];
+const files = ["image/jpeg", "image/png", "image/gif", "image/jpg"];
 const filter = (req, file, cb) => {
     if (files.includes(file.mimetype)) {
         cb(null, true);

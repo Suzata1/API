@@ -1,11 +1,11 @@
-import DocumentModel  from "model/document.model.js";
+import DocumentModel  from "../model/document.model.js";
 
 const documentController = {};
 documentController.uploadDocument = async (req, res) => {
     try {
 
         const { name } = req.body;
-        const file = req.file;
+        const file = req.files;
 
         if (!name || !file) {
             res.status(400).json({
@@ -19,7 +19,7 @@ documentController.uploadDocument = async (req, res) => {
         })
         await Document.save();
 
-        res,status(201).json({
+        res.status(201).json({
             message: "Document uploaded successfully",
             success: true,
             data: Document

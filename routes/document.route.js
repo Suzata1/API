@@ -4,5 +4,5 @@ import upload from "../middleware/upload.js";
 
 const router = Router();
 
-router.post("/upload", upload.array ("file"), documentController.uploadDocument);   
+router.post("/upload", upload.array ("file" , 2), documentController.uploadDocument);   
 export default router;

@@ -3,7 +3,8 @@ import DocumentModel  from "../model/document.model.js";
 const documentController = {};
 documentController.uploadDocument = async (req, res) => {
     try {
-
+console.log("req.body", req.body);
+console.log("req.file", req.files);
         const { name } = req.body;
         const file = req.files;
 
@@ -13,7 +14,7 @@ documentController.uploadDocument = async (req, res) => {
                 success: false,
             })
         }
-        const Document = DocumentModel({
+        const Document = await DocumentModel.create({
             name,
             file,
         })
